@@ -1,15 +1,67 @@
-import sqlite3
-import os
-from pathlib import Path
+from datetime import datetime, date, timedelta
+import database
+from logger import get_logger
+from config import DIM_DATE_TABLE_NAME, DIM_TITLE_TABLE_NAME
+from utils import get_all_titles
 
-RAW_PATH = r"data\raw"
+logger = get_logger("load_in_db")
 
-def read_raw():
-    # iterate files in raw folder
-    files = Path(RAW_PATH).glob("*.txt")
-    for file in files:
-        print(file)
-        
+
+def load_dim_date_table() -> None:
+    """add dates to date table"""
+    year = datetime.now().year
+    start_date = date(year, 1, 1)
+    end_date = date(year, 12, 31)
+    current_date = start_date
+    while current_date <= end_date:
+        with database.SQLiteDB() as db:
+            has_date = db.fetch_one(
+                f"SELECT 1 FROM {DIM_DATE_TABLE_NAME} WHERE date = ?", (current_date,)
+            )
+            if not has_date:
+                db.execute_query(
+                    f"""
+                    INSERT INTO {DIM_DATE_TABLE_NAME} (date, year, quarter, month, day, weekday, week)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        current_date,
+                        current_date.year,
+                        (current_date.month - 1) // 3 + 1,
+                        current_date.month,
+                        current_date.day,
+                        current_date.weekday(),
+                        current_date.isocalendar()[1],
+                    ),
+                )
+                logger.info(f"Date {current_date} added to {DIM_DATE_TABLE_NAME}")
+        current_date += timedelta(days=1)
+
+
+def load_title_table() -> None:
+    """add titles to title table"""
+    titles = get_all_titles()
+    for title in titles:
+        with database.SQLiteDB() as db:
+            has_title = db.fetch_one(
+                f"SELECT 1 FROM {DIM_TITLE_TABLE_NAME} WHERE title = ?", (title,)
+            )
+            if not has_title:
+                db.execute_query(
+                    f"""
+                    INSERT INTO {DIM_TITLE_TABLE_NAME} (title)
+                    VALUES (?)
+                    """,
+                    (title,),
+                )
+                logger.info((f"Title {title} added to {DIM_TITLE_TABLE_NAME}"))
+
+
+def load_fact_table() -> None:
+    pass
+
 
 if __name__ == "__main__":
-    read_raw()
+    # load_dim_date_table()
+    # load_title_table()
+    pass
