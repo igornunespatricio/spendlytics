@@ -39,7 +39,24 @@ def get_all_titles() -> list[str]:
     return titles
 
 
+def get_all_data() -> list[str]:
+    """get all data from raw files"""
+    data = []
+    files = get_raw_csv_files()
+    for file in files:
+        with open(file, "r") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                row["file_source"] = file.name
+                data.append(row)
+    return data
+
+
 if __name__ == "__main__":
     # create_database()
     # get_all_titles()
+    for i, item in enumerate(get_all_data()):
+        print(item)
+        if i == 2:
+            exit()
     pass

@@ -1,8 +1,12 @@
 from datetime import datetime, date, timedelta
 import src.database as database
 from src.logger import get_logger
-from src.config import DIM_DATE_TABLE_NAME, DIM_TITLE_TABLE_NAME
-from src.utils import get_all_titles
+from src.config import (
+    DIM_DATE_TABLE_NAME,
+    DIM_TITLE_TABLE_NAME,
+    FACT_TRANSACTION_TABLE_NAME,
+)
+from src.utils import get_all_titles, get_all_data
 
 logger = get_logger("load_in_db")
 
@@ -60,7 +64,38 @@ def load_title_table() -> None:
 # TODO: implement this function
 def load_fact_table() -> None:
     """add transactions to fact table"""
-    pass
+    data = get_all_data()
+    with database.SQLiteDB() as db:
+        for i, item in enumerate(data):
+            date = item["date"]
+            title = item["title"]
+            amount = item["amount"]
+            file_source = item["file_source"]
+            date_id = db.fetch_one(
+                f"SELECT date_id FROM {DIM_DATE_TABLE_NAME} WHERE date = ?",
+                (date,),
+            )
+            title_id = db.fetch_one(
+                f"SELECT title_id FROM {DIM_TITLE_TABLE_NAME} WHERE title = ?",
+                (title,),
+            )
+            has_transaction = db.fetch_one(
+                f"SELECT 1 FROM {FACT_TRANSACTION_TABLE_NAME} WHERE date_id = ? AND title_id = ?",
+                (date_id[0], title_id[0]),
+            )
+            if not has_transaction:
+                db.execute_query(
+                    f"""
+                    INSERT INTO {FACT_TRANSACTION_TABLE_NAME} (date_id, title_id, amount, file_source)
+                    VALUES (?, ?, ?, ?)
+                    """,
+                    (date_id[0], title_id[0], amount, file_source),
+                )
+                logger.info(
+                    (
+                        f"Transaction {date} - {title} - {amount} added to {FACT_TRANSACTION_TABLE_NAME}"
+                    )
+                )
 
 
 def load_tables() -> None:
@@ -70,6 +105,4 @@ def load_tables() -> None:
 
 
 if __name__ == "__main__":
-    # load_dim_date_table()
-    # load_title_table()
     pass
