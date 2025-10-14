@@ -1,6 +1,7 @@
 import sqlite3
 from typing import Any, List, Tuple, Optional
-from config import DB_PATH
+from src.config import DB_PATH
+
 
 class SQLiteDB:
     def __init__(self, db_path: str = DB_PATH):
@@ -27,7 +28,9 @@ class SQLiteDB:
             cursor.execute(query, params)
             return cursor.fetchall()
 
-    def fetch_one(self, query: str, params: Tuple[Any, ...] = ()) -> Optional[Tuple[Any]]:
+    def fetch_one(
+        self, query: str, params: Tuple[Any, ...] = ()
+    ) -> Optional[Tuple[Any]]:
         with self.connection:
             cursor = self.connection.cursor()
             cursor.execute(query, params)

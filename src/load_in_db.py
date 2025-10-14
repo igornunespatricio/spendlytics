@@ -1,8 +1,8 @@
 from datetime import datetime, date, timedelta
-import database
-from logger import get_logger
-from config import DIM_DATE_TABLE_NAME, DIM_TITLE_TABLE_NAME
-from utils import get_all_titles
+import src.database as database
+from src.logger import get_logger
+from src.config import DIM_DATE_TABLE_NAME, DIM_TITLE_TABLE_NAME
+from src.utils import get_all_titles
 
 logger = get_logger("load_in_db")
 
@@ -57,8 +57,16 @@ def load_title_table() -> None:
                 logger.info((f"Title {title} added to {DIM_TITLE_TABLE_NAME}"))
 
 
+# TODO: implement this function
 def load_fact_table() -> None:
+    """add transactions to fact table"""
     pass
+
+
+def load_tables() -> None:
+    load_dim_date_table()
+    load_title_table()
+    load_fact_table()
 
 
 if __name__ == "__main__":

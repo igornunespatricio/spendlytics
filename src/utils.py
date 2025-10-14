@@ -1,7 +1,7 @@
-import database
+import src.database as database
 from pathlib import Path
 import csv
-from config import (
+from src.config import (
     RAW_DATA_PATH,
     DB_PATH,
     DIM_DATE_QUERY,
@@ -42,4 +42,4 @@ def get_all_titles() -> list[str]:
 if __name__ == "__main__":
     # create_database()
     # get_all_titles()
-    
+    pass
