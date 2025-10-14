@@ -1,0 +1,1 @@
+tree -I '.git|__pycache__|.venv' > README.md
