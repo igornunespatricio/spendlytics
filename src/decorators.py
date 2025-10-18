@@ -5,6 +5,25 @@ from src.database import log_function_metrics
 
 
 def performance_monitor(func):
+    """
+    A decorator that monitors function execution performance.
+
+    Tracks execution time and status (completed/failed) of the decorated function,
+    logging the metrics to the database for performance analysis and monitoring.
+
+    Args:
+        func (Callable): The function to be monitored
+
+    Returns:
+        Callable: The wrapped function with performance monitoring
+
+    Example:
+        >>> @performance_monitor
+        ... def my_function():
+        ...     # function logic
+        ...     pass
+    """
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         start_time = time.time()
