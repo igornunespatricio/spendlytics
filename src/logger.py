@@ -2,10 +2,6 @@ import logging
 import os
 
 
-import logging
-import os
-
-
 def get_logger(name: str, log_dir: str = "logs") -> logging.Logger:
     """
     Creates and returns a logger that writes to logs/{name}.log and also prints to console.
