@@ -15,7 +15,13 @@ logger = get_logger("load_in_db")
 
 @performance_monitor
 def load_dim_date_table() -> None:
-    """add dates to date table"""
+    """
+    Populates the date dimension table with all dates for the current year.
+
+    Generates dates from January 1st to December 31st of the current year,
+    extracting temporal attributes like year, quarter, month, day, weekday, and week number.
+    Only inserts dates that don't already exist in the table to avoid duplicates.
+    """
     year = datetime.now().year
     start_date = date(year, 1, 1)
     end_date = date(year, 12, 31)
@@ -47,7 +53,12 @@ def load_dim_date_table() -> None:
 
 @performance_monitor
 def load_title_table() -> None:
-    """add titles to title table"""
+    """
+    Populates the title dimension table with unique transaction titles.
+
+    Extracts all distinct titles from raw CSV files and inserts them into
+    the dimension table, avoiding duplicates by checking for existing titles.
+    """
     titles = get_all_titles()
     for title in titles:
         with database.SQLiteDB() as db:
@@ -67,7 +78,13 @@ def load_title_table() -> None:
 
 @performance_monitor
 def load_fact_table() -> None:
-    """add transactions to fact table"""
+    """
+    Loads transaction data into the fact table from raw CSV files.
+
+    Processes each transaction record, resolves date and title foreign keys,
+    and inserts unique transactions into the fact table while avoiding duplicates.
+    Each transaction is linked to its corresponding date and title dimensions.
+    """
     data = get_all_data()
     with database.SQLiteDB() as db:
         for item in data:
@@ -101,6 +118,15 @@ def load_fact_table() -> None:
 
 
 def load_tables() -> None:
+    """
+    Loads all necessary tables in the database.
+
+    First, it loads the date dimension table with all dates for the current year.
+    Then, it loads the title dimension table with all unique transaction titles.
+    Finally, it loads the fact table with transaction data from raw CSV files.
+
+    This function is a convenience wrapper for the individual loading functions.
+    """
     load_dim_date_table()
     load_title_table()
     load_fact_table()
