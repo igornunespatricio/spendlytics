@@ -1,7 +1,8 @@
 import sqlite3
+from datetime import datetime
 from typing import Any
 
-from src.config import DB_PATH
+from src.config import DB_PATH, FACT_METRICS_TABLE_NAME
 
 
 class SQLiteDB:
@@ -34,3 +35,16 @@ class SQLiteDB:
             cursor = self.connection.cursor()
             cursor.execute(query, params)
             return cursor.fetchone()
+
+
+def log_function_metrics(function_name: str, execution_time: float, status: str):
+    """Store function metrics in database"""
+    with SQLiteDB() as db:
+        db.execute_query(
+            f"""
+            INSERT INTO {FACT_METRICS_TABLE_NAME}
+            (function_name, execution_time, timestamp, status)
+            VALUES (?, ?, ?, ?)
+            """,
+            (function_name, execution_time, datetime.now(), status),
+        )

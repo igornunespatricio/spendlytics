@@ -6,12 +6,14 @@ from src.config import (
     DIM_TITLE_TABLE_NAME,
     FACT_TRANSACTION_TABLE_NAME,
 )
+from src.decorators import performance_monitor
 from src.logger import get_logger
 from src.utils import get_all_data, get_all_titles
 
 logger = get_logger("load_in_db")
 
 
+@performance_monitor
 def load_dim_date_table() -> None:
     """add dates to date table"""
     year = datetime.now().year
@@ -43,6 +45,7 @@ def load_dim_date_table() -> None:
         current_date += timedelta(days=1)
 
 
+@performance_monitor
 def load_title_table() -> None:
     """add titles to title table"""
     titles = get_all_titles()
@@ -62,6 +65,7 @@ def load_title_table() -> None:
                 logger.info(f"Title {title} added to {DIM_TITLE_TABLE_NAME}")
 
 
+@performance_monitor
 def load_fact_table() -> None:
     """add transactions to fact table"""
     data = get_all_data()

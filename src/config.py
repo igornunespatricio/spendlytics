@@ -4,6 +4,7 @@ LOGGER_PATH = r"logs"
 DIM_DATE_TABLE_NAME = "dim_date"
 DIM_TITLE_TABLE_NAME = "dim_title"
 FACT_TRANSACTION_TABLE_NAME = "fact_transactions"
+FACT_METRICS_TABLE_NAME = "function_metrics"
 
 DIM_DATE_QUERY = f"""
 CREATE TABLE IF NOT EXISTS {DIM_DATE_TABLE_NAME} (
@@ -37,6 +38,18 @@ CREATE TABLE IF NOT EXISTS {FACT_TRANSACTION_TABLE_NAME} (
 );
 """
 
-INDEX_QUERIES = """
-CREATE INDEX IF NOT EXISTS idx_fact_file_source ON fact_transactions(file_source);
+INDEX_QUERIES = f"""
+CREATE INDEX IF NOT EXISTS idx_fact_file_source ON {FACT_TRANSACTION_TABLE_NAME}(file_source);
+"""
+
+# Add this to your existing config.py
+FACT_METRICS_TABLE_QUERY = f"""
+CREATE TABLE IF NOT EXISTS {FACT_METRICS_TABLE_NAME} (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    function_name TEXT NOT NULL,
+    execution_time REAL NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status TEXT NOT NULL,
+    error_message TEXT
+);
 """
