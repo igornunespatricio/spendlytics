@@ -10,7 +10,13 @@ logger = get_logger("calculate_metrics")
 
 
 def calculate_amount_spent_per_month() -> None:
-    """Calculates the total amount spent per month and stores in a summary table"""
+    """
+    Calculates and stores monthly spending totals in a summary table.
+
+    Creates a monthly_spending_summary table aggregating transaction amounts
+    by year and month, excluding income transactions (titles containing 'Pagamento recebido').
+    The summary provides quick access to monthly spending trends without complex queries.
+    """
     with database.SQLiteDB() as db:
         # Create the summary table
         db.execute_query(
@@ -44,7 +50,13 @@ def calculate_amount_spent_per_month() -> None:
 
 
 def calculate_amount_spent_per_title() -> None:
-    """Calculates the total amount spent per title and stores in a summary table"""
+    """
+    Calculates and stores spending totals per transaction title in a summary table.
+
+    Creates a title_spending_summary table aggregating transaction amounts
+    by title, excluding income transactions (titles containing 'Pagamento recebido').
+    Provides quick insights into spending patterns by category or merchant.
+    """
     with database.SQLiteDB() as db:
         # Create the summary table
         db.execute_query(
