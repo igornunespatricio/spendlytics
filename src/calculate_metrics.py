@@ -1,8 +1,8 @@
 import src.database as database
 from src.config import (
-    FACT_TRANSACTION_TABLE_NAME,
     DIM_DATE_TABLE_NAME,
     DIM_TITLE_TABLE_NAME,
+    FACT_TRANSACTION_TABLE_NAME,
 )
 from src.logger import get_logger
 
@@ -14,7 +14,7 @@ def calculate_amount_spent_per_month() -> None:
     with database.SQLiteDB() as db:
         # Create the summary table
         db.execute_query(
-            f"""CREATE TABLE IF NOT EXISTS monthly_spending_summary (
+            """CREATE TABLE IF NOT EXISTS monthly_spending_summary (
                 year INTEGER,
                 month INTEGER,
                 total_amount REAL,
@@ -48,7 +48,7 @@ def calculate_amount_spent_per_title() -> None:
     with database.SQLiteDB() as db:
         # Create the summary table
         db.execute_query(
-            f"""CREATE TABLE IF NOT EXISTS title_spending_summary (
+            """CREATE TABLE IF NOT EXISTS title_spending_summary (
                 title_id INTEGER,
                 title TEXT,
                 total_amount REAL,
@@ -61,7 +61,7 @@ def calculate_amount_spent_per_title() -> None:
 
         # Fetch the data
         data = db.fetch_all(
-            f"""SELECT t.title_id, t.title, SUM(f.amount) 
+            f"""SELECT t.title_id, t.title, SUM(f.amount)
             FROM {FACT_TRANSACTION_TABLE_NAME} as f
             LEFT JOIN {DIM_TITLE_TABLE_NAME} AS t ON f.title_id = t.title_id
             WHERE t.title <> 'Pagamento recebido'

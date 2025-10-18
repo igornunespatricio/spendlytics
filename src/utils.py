@@ -1,13 +1,13 @@
-import src.database as database
-from pathlib import Path
 import csv
+from pathlib import Path
+
+import src.database as database
 from src.config import (
-    RAW_DATA_PATH,
-    DB_PATH,
     DIM_DATE_QUERY,
     DIM_TITLE_QUERY,
     FACT_TRANSACTION_QUERY,
     INDEX_QUERIES,
+    RAW_DATA_PATH,
 )
 
 
@@ -32,7 +32,7 @@ def get_all_titles() -> list[str]:
     titles = []
     files = get_raw_csv_files()
     for file in files:
-        with open(file, "r") as f:
+        with open(file) as f:
             reader = csv.DictReader(f)
             for row in reader:
                 titles.append(row["title"])
@@ -44,7 +44,7 @@ def get_all_data() -> list[str]:
     data = []
     files = get_raw_csv_files()
     for file in files:
-        with open(file, "r") as f:
+        with open(file) as f:
             reader = csv.DictReader(f)
             for row in reader:
                 row["file_source"] = file.name
