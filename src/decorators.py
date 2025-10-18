@@ -27,12 +27,13 @@ def performance_monitor(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         start_time = time.time()
-
+        error_message = None
         try:
             result = func(*args, **kwargs)
             status = "completed"
         except Exception as e:
-            status = f"failed: {str(e)}"
+            status = "failed"
+            error_message = str(e)
             raise
         finally:
             end_time = time.time()
@@ -43,6 +44,7 @@ def performance_monitor(func):
                 function_name=func.__name__,
                 execution_time=execution_time,
                 status=status,
+                error_message=error_message,
             )
 
         return result
