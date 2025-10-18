@@ -5,12 +5,15 @@ import src.database as database
 from src.config import (
     DIM_DATE_QUERY,
     DIM_TITLE_QUERY,
+    FACT_METRICS_TABLE_QUERY,
     FACT_TRANSACTION_QUERY,
     INDEX_QUERIES,
     RAW_DATA_PATH,
 )
+from src.decorators import performance_monitor
 
 
+@performance_monitor
 def create_database():
     """Creates the database file and the tables"""
     # create the tables
@@ -18,6 +21,7 @@ def create_database():
         db.execute_query(DIM_DATE_QUERY)
         db.execute_query(DIM_TITLE_QUERY)
         db.execute_query(FACT_TRANSACTION_QUERY)
+        db.execute_query(FACT_METRICS_TABLE_QUERY)
         db.execute_query(INDEX_QUERIES)
 
 

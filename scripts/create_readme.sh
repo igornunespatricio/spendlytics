@@ -15,7 +15,7 @@ $PROJECT_DESCRIPTION
 ## Quick Start
 
 ### Prerequisites
-- Python 3.11+
+- Python 3.12+
 - Poetry (dependency management)
 
 ### Installation
