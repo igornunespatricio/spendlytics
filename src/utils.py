@@ -15,7 +15,27 @@ from src.decorators import performance_monitor
 
 @performance_monitor
 def create_database():
-    """Creates the database file and the tables"""
+    """
+    Initializes the database by creating all necessary tables and indexes.
+
+    This function creates the following database schema:
+    - Dimension tables (date, title) for data categorization
+    - Fact tables (transactions, function_metrics) for core data and monitoring
+    - Indexes for optimized query performance
+
+    Tables Created:
+    - dim_date: Date dimension for time-based analysis
+    - dim_title: Title dimension for transaction categorization
+    - fact_transaction: Main transaction facts with amounts and relationships
+    - function_metrics: Performance monitoring data for function execution
+
+    The function uses predefined SQL queries from config to ensure consistent
+    schema creation across environments.
+
+    Raises:
+        DatabaseError: If any table creation query fails
+        OperationalError: If database file cannot be accessed or created
+    """
     # create the tables
     with database.SQLiteDB() as db:
         db.execute_query(DIM_DATE_QUERY)
@@ -26,13 +46,13 @@ def create_database():
 
 
 def get_raw_csv_files() -> list[Path]:
-    """return list of csv filepaths in the RAW_DATA_PATH directory"""
+    """Returns a list of all CSV file paths in the raw data directory."""
     files = list(Path(RAW_DATA_PATH).glob("*.csv"))
     return files
 
 
 def get_all_titles() -> list[str]:
-    """get all distinct titles from raw files"""
+    """Extracts all unique transaction titles from raw CSV files."""
     titles = []
     files = get_raw_csv_files()
     for file in files:
@@ -44,7 +64,7 @@ def get_all_titles() -> list[str]:
 
 
 def get_all_data() -> list[str]:
-    """get all data from raw files"""
+    """Reads and combines all transaction data from raw CSV files."""
     data = []
     files = get_raw_csv_files()
     for file in files:
