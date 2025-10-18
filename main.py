@@ -1,5 +1,5 @@
-from load_in_db import load_tables
-from utils import create_database
+from src.load_in_db import load_tables
+from src.utils import create_database
 
 
 def main() -> None:
